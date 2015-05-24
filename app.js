@@ -10,6 +10,11 @@ app.config([
         templateUrl: 'home.html',
         controller: 'MainCtrl'
       });
+      .state('posts', {
+        url: '/posts/{id}',
+        templateUrl: '/posts.html',
+        controller: 'PostsCtrl'
+      });
 
     $urlRouterProvider.otherwise('home');
 }]);
@@ -23,12 +28,13 @@ app.factory('posts', [function() {
 
 app.controller('MainCtrl', [
 '$scope',
+'$stateParams',
 'posts',
-function($scope, posts){
+function($scope, $stateParams, posts){
   // Data
   $scope.test = 'Hello world';
 
-  $scope.posts = posts.posts;
+  $scope.posts = posts.posts[$stateParams.id];
 
   // Functions
   $scope.addPost = function() {
@@ -40,6 +46,10 @@ function($scope, posts){
         title: $scope.title,
         link: $scope.link,
         upvotes: 0
+        comments: [
+          {author: 'Joe', body: 'Cool post!', upvotes: 0},
+          {author: 'Bob', body: 'Great idea but you need to fix a few things!', upvotes: 0}
+        ]
       });
       $scope.title = ''; // Clearing input after submission
       $scope.link = '';
