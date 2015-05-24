@@ -1,18 +1,34 @@
-var app = angular.module('flapperNews', []);
+var app = angular.module('flapperNews', ['ui.router']);
+
+app.config([
+  '$stateProvider',
+  '$urlRouteProvider',
+  function($stateProvider, $urlRouterProvider) {
+    $stateProvider
+      .state('home', {
+        url: '/home',
+        templateUrl: 'home.html',
+        controller: 'MainCtrl'
+      });
+
+    $urlRouterProvider.otherwise('home');
+}]);
+
+app.factory('posts', [function() {
+  var o = {
+    posts: []
+  }
+  return o;
+}])
 
 app.controller('MainCtrl', [
 '$scope',
-function($scope){
+'posts',
+function($scope, posts){
   // Data
   $scope.test = 'Hello world';
 
-  $scope.posts = [
-    {title: 'post 1', upvotes: 5},
-    {title: 'post 2', upvotes: 2},
-    {title: 'post 3', upvotes: 15},
-    {title: 'post 4', upvotes: 9},
-    {title: 'post 5', upvotes: 4}
-  ];
+  $scope.posts = posts.posts;
 
   // Functions
   $scope.addPost = function() {
