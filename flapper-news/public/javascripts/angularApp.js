@@ -8,7 +8,12 @@ function($stateProvider, $urlRouterProvider) {
     .state('home', {
       url: '/home',
       templateUrl: '/home.html',
-      controller: 'MainCtrl'
+      controller: 'MainCtrl',
+      resolve: {
+        postPromise: ['posts', function(posts) {
+          return posts.getAll();
+        }]
+      }
     })
     .state('posts', {
       url: '/posts/{id}',
@@ -20,10 +25,23 @@ function($stateProvider, $urlRouterProvider) {
 
 }]);
 
-app.factory('posts', [function() {
+app.factory('posts', ['$http', function($http) {
   var o = {
     posts: []
   };
+
+  o.getAll = function() {
+    return $http.get('/posts').success(function(data){
+      angular.copy(data, o.posts);
+    });
+  };
+
+  o.create = function(post) {
+    return $http.post('/posts', post).success(function(data){
+      o.posts.push(data);
+    });
+  };
+
   return o;
 }]);
 
@@ -37,21 +55,15 @@ function($scope, posts){
 
   $scope.addPost = function() {
     // Checking post content
-    if (!$scope.title || $scope.title === '') {
-      return;
-    } else {
-      $scope.posts.push({
-        title: $scope.title,
-        link: $scope.link,
-        upvotes: 0,
-        comments: [
-          {author: 'Joe', body: 'Cool stuff!', upvotes: 0},
-          {author: 'Tom', body: 'What is this?!', upvotes: 0}
-        ]
-      });
-      $scope.title = ''; // Clearing input after submission
-      $scope.link = '';
-    }
+    if (!$scope.title || $scope.title === '') { return; }
+    posts.create({
+      title: $scope.title,
+      link: $scope.link,
+    });
+
+    $scope.title = ''; // Clearing input after submission
+    $scope.link = '';
+
   }
   $scope.incrementUpvotes = function(post) {
     post.upvotes += 1;
