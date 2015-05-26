@@ -6,13 +6,18 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 // #####################################
 
-// MongoDB Code
+// MongoDB/Passport Code
 var mongoose = require('mongoose');
+var passport = require('passport');
 require('./models/Posts');
 require('./models/Comments');
+require('./models/Users');
+
+// Passport
+require('./config/passport');
+app.use(passport.initialize());
 
 mongoose.connect('mongodb://localhost/news');
-
 
 // #####################################
 var routes = require('./routes/index');

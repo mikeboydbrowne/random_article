@@ -25,23 +25,6 @@ router.post('/posts', function(req, res, next) {
   });
 });
 
-// Adding a comment
-router.post('/posts/:post/comments', function(req, res, next) {
-  var comment = new Comment(req.body);
-  comment.post = req.post;
-
-  comment.save(function(err, comment) {
-    if (err) { return next(err); }
-
-    req.post.comments.push(comment);
-    req.post.save(function(err, post) {
-      if (err) { return next(err); }
-
-      res.json(comment);
-    });
-  });
-});
-
 // Get a post's ID
 router.param('post', function(req, res, next, id) {
   var query = Post.findById(id);
@@ -65,12 +48,12 @@ router.param('comment', function(req, res, next, id) {
 
     req.comment = comment;
     return next();
-  })
-})
+  });
+});
 
 // Getting a specific post
 router.get('/posts/:post', function(req, res) {
-  req.post.populate('comments', function(err, post) {
+  req.post.populate('comments', function(err,post) {
     if (err) { return next(err); }
 
     res.json(post);
@@ -92,8 +75,25 @@ router.put('/posts/:post/comments/:comment/upvote', function(req, res, next) {
     if (err) { return next(err); }
 
     res.json(comment);
-  })
-})
+  });
+});
+
+// Adding a comment
+router.post('/posts/:post/comments', function(req, res, next) {
+  var comment = new Comment(req.body);
+  comment.post = req.post;
+
+  comment.save(function(err, comment) {
+    if (err) { return next(err); }
+
+    req.post.comments.push(comment);
+    req.post.save(function(err, post) {
+      if (err) { return next(err); }
+
+      res.json(comment);
+    });
+  });
+});
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
