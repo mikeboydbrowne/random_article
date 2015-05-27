@@ -44,7 +44,7 @@ function($stateProvider, $urlRouterProvider) {
           state.go('home');
         }
       }]
-    })
+    });
 
   $urlRouterProvider.otherwise('home');
 
@@ -82,7 +82,7 @@ app.factory('auth', ['$http', '$window', function($http, $window) {
     }
   };
 
-  auth.register = function() {
+  auth.register = function(user) {
     return $http.post('/register', user).success(function(data){
       auth.saveToken(data.token);
     });
@@ -101,7 +101,7 @@ app.factory('auth', ['$http', '$window', function($http, $window) {
   return auth;
 }]);
 
-app.factory('posts', ['$http', 'auth', function($http) {
+app.factory('posts', ['$http', 'auth', function($http, auth) {
   var o = {
     posts: []
   };
@@ -119,25 +119,31 @@ app.factory('posts', ['$http', 'auth', function($http) {
   };
 
   o.create = function(post) {
-    return $http.post('/posts', post).success(function(data){
+    return $http.post('/posts', post, {
+      headers: {Authorization: 'Bearer '+auth.getToken()}
+    }).success(function(data){
       o.posts.push(data);
     });
   };
 
   o.upvote = function(post) {
-    return $http.put('/posts/' + post._id + '/upvote')
-      .success(function(data) {
+    return $http.put('/posts/' + post._id + '/upvote', null, {
+      headers: {Authorization: 'Bearer '+auth.getToken()}
+    }).success(function(data) {
         post.upvotes += 1;
       });
   };
 
   o.addComment = function(id, comment) {
-    return $http.post('/posts/' + id + '/comments', comment);
+    return $http.post('/posts/' + id + '/comments', comment, {
+      headers: {Authorization: 'Bearer '+auth.getToken()}
+    });
   };
 
   o.upvoteComment = function(post, comment) {
-    return $http.put('/posts/' + post._id + '/comments/' + comment._id + '/upvote')
-      .success(function(data) {
+    return $http.put('/posts/' + post._id + '/comments/' + comment._id + '/upvote', null, {
+      headers: {Authorization: 'Bearer '+auth.getToken()}
+    }).success(function(data) {
         comment.upvotes += 1;
       });
   };
@@ -148,8 +154,11 @@ app.factory('posts', ['$http', 'auth', function($http) {
 app.controller('MainCtrl', [
 '$scope',
 'posts',
-function($scope, posts){
+'auth',
+function($scope, posts, auth){
   $scope.test = 'Hello world';
+
+  $scope.isLoggedIn = auth.isLoggedIn;
 
   $scope.posts = posts.posts;
 
@@ -172,10 +181,13 @@ function($scope, posts){
 
 app.controller('PostsCtrl', [
 '$scope',
-'post',  // This was your issue!!!
+'post',
 'posts',
-function($scope, post, posts) {
+'auth',
+function($scope, post, posts, auth) {
   $scope.post = post;
+
+  $scope.isLoggedIn = auth.isLoggedIn;
 
   $scope.addComment = function() {
     if ($scope.body === '') { return; }
