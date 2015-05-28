@@ -9,10 +9,17 @@ This project is my first foray into the MEAN stack. Instructions for MEAN stack 
     ├── bin
     ├── config
     ├── models
+    │   ├── Comments.js         # Comments DB schema
+    │   ├── Posts.js            # Posts DB schema
+    │   └── Users.js            # User DB schema
     ├── public
     │   ├── images
     │   ├── javascripts
+    │   │   └── angularApp.js   # Angular logic
     │   └── stylesheets
     ├── routes
-    └── views
+    │   └── index.js            # Express logic
+    ├── views
+    │   └── index.ejs           # HTML templates
+    └── app.js                  # Node app code
 ```
