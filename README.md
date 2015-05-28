@@ -12,7 +12,7 @@ Once you've installed the node modules, you can run the application using the fo
 mongod &    # run in one terminal window
 npm start   # run in a second terminal window
 ```
-Now that the application is running, navigate to localhost:3000/ in your browser.
+Now that the application is running, navigate to [localhost:3000](http://localhost:3000) in your browser.
 
 ## Directory Structure
 ```
