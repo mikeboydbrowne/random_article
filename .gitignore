@@ -1,1 +1,2 @@
-/flapper-news/node_modules
+/random_article/node_modules/*
+/random_article/.bin/*

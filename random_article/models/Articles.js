@@ -1,10 +1,7 @@
 var mongoose = require('mongoose');
 
 var ArticleSchema = new mongoose.Schema({
-  body: String,
-  author: String,
-  upvotes: {type: Number, default: 0},
-  post: { type: mongoose.Schema.Types.ObjectId, ref: 'Post' }
+  text: String
 });
 
 // CommentSchema.methods.upvote = function(cb) {
@@ -12,4 +9,4 @@ var ArticleSchema = new mongoose.Schema({
 //   this.save(cb);
 // };
 
-mongoose.model('Article', CommentSchema);
+mongoose.model('Article', ArticleSchema);
