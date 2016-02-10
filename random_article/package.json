@@ -13,6 +13,8 @@
     "express": "~4.12.4",
     "morgan": "~1.5.3",
     "serve-favicon": "~2.2.1",
+    "jquery": "2.1.4",
+    "bootstrap": "3.3.5",
     "mongoose": "~4.0.3",
     "jsonwebtoken": "~5.0.1",
     "passport": "~0.2.2",

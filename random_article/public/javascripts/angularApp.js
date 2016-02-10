@@ -12,6 +12,9 @@ function($stateProvider, $urlRouterProvider) {
       resolve: {
         postPromise: ['posts', function(posts) {
           return posts.getAll();
+        }],
+        articlePromise: ['articles', function(articles) {
+          return articles.getAll();
         }]
       }
     })
@@ -22,6 +25,16 @@ function($stateProvider, $urlRouterProvider) {
       resolve: {
         post: ['$stateParams', 'posts', function($stateParams, posts) {
           return posts.get($stateParams.id);
+        }]
+      }
+    })
+    .state('articles', {
+      url: '/articles/{id}',
+      templateUrl: '/articles.html',
+      controller: 'ArticlesCtrl',
+      resolve: {
+        article: ['$stateParams', 'articles', function($stateParams, articles) {
+          return articles.get($stateParams.id);
         }]
       }
     })
@@ -151,16 +164,49 @@ app.factory('posts', ['$http', 'auth', function($http, auth) {
   return o;
 }]);
 
+// NEW
+// Article factory
+app.factory('articles', ['$http', 'auth', function($http, auth) {
+  var o = {
+    articles: []
+  };
+
+  o.get = function(id) {
+    return $http.get('/articles/' + id).then(function(res) {
+      return res.data;
+    });
+  };
+
+  o.getAll = function() {
+    return $http.get('/articles').success(function(data) {
+      angular.copy(data, o.articles);
+    });
+  };
+
+//  o.upvote = function(article) {
+//    return $http.put('/articles/' + article._id + '/upvote', null, {
+//      headers: {Authorization: 'Bearer '+auth.getToken()}
+//    }).success(function(data) {
+//        article.upvotes += 1;
+//    });
+//  };
+
+  return o;
+}]);
+
+
 app.controller('MainCtrl', [
 '$scope',
-'posts',
+    'posts',
+    'articles',
 'auth',
-function($scope, posts, auth){
+function($scope, posts, articles,  auth){
   $scope.test = 'Hello world';
 
   $scope.isLoggedIn = auth.isLoggedIn;
 
   $scope.posts = posts.posts;
+  $scope.articles = articles.articles
 
   $scope.addPost = function() {
     // Checking post content
@@ -172,11 +218,12 @@ function($scope, posts, auth){
 
     $scope.title = ''; // Clearing input after submission
     $scope.link = '';
-  }
+  };
 
   $scope.incrementUpvotes = function(post) {
     posts.upvote(post);
-  }
+  };
+
 }]);
 
 app.controller('PostsCtrl', [
@@ -203,6 +250,18 @@ function($scope, post, posts, auth) {
   $scope.incrementUpvotes = function(comment) {
     posts.upvoteComment(post, comment);
   };
+}]);
+
+// NEW
+// Article controller
+app.controller('ArticlesCtrl', [
+'$scope',
+'article',
+'articles',
+'auth',
+function($scope, article, articles, auth) {
+  $scope.article = article;
+  $scope.isLoggedIn = auth.isLoggedIn;
 }]);
 
 app.controller('AuthCtrl', [

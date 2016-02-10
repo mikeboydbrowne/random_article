@@ -1,4 +1,3 @@
-var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -11,6 +10,10 @@ var mongoose = require('mongoose');
 require('./models/Posts');
 require('./models/Comments');
 require('./models/Users');
+require('./models/Articles'); // Start adding article information
+
+// Express
+var express = require('express');
 
 // Passport
 var passport = require('passport');
@@ -72,6 +75,5 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
-
 
 module.exports = app;

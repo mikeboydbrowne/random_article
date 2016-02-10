@@ -6,18 +6,28 @@ var mongoose = require('mongoose');
 var Post = mongoose.model('Post');
 var Comment = mongoose.model('Comment');
 var User = mongoose.model('User');
-// var Article = mongoose.model('Article');  // Start adding article information
+var Article = mongoose.model('Article');  // Start adding article information
 
 // Auth variables
 var passport = require('passport');
 var jwt = require('express-jwt');
 var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
 
+// Getting posts
 router.get('/posts', function(req, res, next) {
   Post.find(function(err, posts) {
     if (err) { return next(err); }
 
     res.json(posts);
+  });
+});
+
+// Getting articles
+router.get('/articles', function(req, res, next) {
+  Article.find(function(err, articles) {
+    if (err) { return next(err); }
+
+    res.json(articles);
   });
 });
 
@@ -59,6 +69,23 @@ router.param('comment', function(req, res, next, id) {
   });
 });
 
+// NEW
+// Get an article's ID
+//router.param('article', function(req, res, next, id) {
+//  var query = Article.findById(id);
+//
+//  query.exec(function (err, article) {
+//    if (err) {
+//      return next(err);
+//    }
+//    if (!article) {
+//      return next(new Error('can\'t find article'));
+//    }
+//    req.article = article;
+//    return next();
+//  });
+//});
+
 // Getting a specific post
 router.get('/posts/:post', function(req, res) {
   req.post.populate('comments', function(err,post) {
@@ -67,6 +94,16 @@ router.get('/posts/:post', function(req, res) {
     res.json(post);
   });
 });
+
+// NEW
+// Getting a specific article
+//router.get('/articles/:article', function(req, res) {
+//  req.post.populate('comments', function(err, article) {
+//    if (err) { return next (err); }
+//
+//    res.json(article);
+//  });
+//});
 
 // Upvoting a post
 router.put('/posts/:post/upvote', auth, function(req, res, next) {
@@ -86,7 +123,17 @@ router.put('/posts/:post/comments/:comment/upvote', auth, function(req, res, nex
   });
 });
 
-// Adding a comment
+// NEW
+// Upvoting an article
+//router.put('/articles/:article/upvote', auth, function(req, res, next) {
+//  req.post.upvote(function(err, comment) {
+//    if (err) { return next(err); }
+//
+//    res.json(article);
+//  })
+//});
+
+// Adding a comment to a post
 router.post('/posts/:post/comments', auth, function(req, res, next) {
   var comment = new Comment(req.body);
   comment.post = req.post;

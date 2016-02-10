@@ -6,10 +6,12 @@ with open('../../aggregated-data.json', 'r') as json_file:
 	data = json.load(json_file)
 	for element in data:
 		text = element["article"]["text"]
+		title = element["article"]["title"]
 		del element["article"]
 		del element["shooter-details"]
 		del element["shooting-details"]
 		del element["victim-details"]
+		element["title"] = title
 		element["text"] = text
 
 with open('../../article-text2.json', 'w') as new_file:

@@ -1,0 +1,13 @@
+{
+  "name": "random_article",
+  "version": "0.0.1",
+  "description": "A visualization tool for gun violence data gathered by Chris Callison-Burch",
+  "dependencies": {
+    "d3": "3",
+    "plottable": "~2.0.0",
+    "svg-typewriter": "0.3.0"
+  },
+  "resolutions": {
+    "svg-typewriter": "0.3.0"
+  }
+}
