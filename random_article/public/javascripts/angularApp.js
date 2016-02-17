@@ -16,6 +16,11 @@ function($stateProvider, $urlRouterProvider) {
         articlePromise: ['articles', function(articles) {
           return articles.getAll();
         }]
+
+        // INSERT GENDER PROMISE
+        //genderPromise: ['genders', function(articles) {
+        //  return articles.countGenders();
+        //}]
       }
     })
     .state('posts', {
@@ -164,11 +169,10 @@ app.factory('posts', ['$http', 'auth', function($http, auth) {
   return o;
 }]);
 
-// NEW
-// Article factory
 app.factory('articles', ['$http', 'auth', function($http, auth) {
   var o = {
-    articles: []
+    articles: [],
+    genders: []
   };
 
   o.get = function(id) {
@@ -179,17 +183,72 @@ app.factory('articles', ['$http', 'auth', function($http, auth) {
 
   o.getAll = function() {
     return $http.get('/articles').success(function(data) {
+
+      // Copying raw article data
       angular.copy(data, o.articles);
+
+      // Accumulating gender data
+      gender_count = []
+      male = 0;
+      female = 0;
+      unknown = 0;
+
+      // Iterating over article data
+      for (i in data) {
+        //console.log(data[i].gender);
+        if (data[i].gender === "male") {
+          male += 1;
+        } else if (data[i].gender === "female") {
+          female += 1;
+        } else {
+          unknown += 1;
+        }
+      }
+      gender_count.push({"sex": "male", "value": male});
+      gender_count.push({"sex": "female", "value": female});
+      gender_count.push({"sex": "unknown", "value": unknown});
+
+      //console.log(gender_count);
+      angular.copy(gender_count, o.genders);
+
+      // Displaying graph
+      list = []
+      list.push({'val': male});
+      list.push({'val': female});
+      list.push({'val': unknown});
+      //getNumShotsGraph();
+
+      console.log(list);
+
+      renderPieChart(list, "v1");
+
     });
   };
 
-//  o.upvote = function(article) {
-//    return $http.put('/articles/' + article._id + '/upvote', null, {
-//      headers: {Authorization: 'Bearer '+auth.getToken()}
-//    }).success(function(data) {
-//        article.upvotes += 1;
-//    });
-//  };
+  // Getting gender per article
+  o.countGenders = function() {
+    return $http.get('/articles').success(function(data) {
+      gender_count = []
+      male = 0;
+      female = 0;
+      unknown = 0;
+      for (i in data) {
+        if (data[i].gender === "male") {
+          male += 1;
+        } else if (data[i].gender === "female") {
+          female += 1;
+        } else {
+          unknown += 1;
+        }
+      }
+      gender_count.push({"sex": "male", "value": male});
+      gender_count.push({"sex": "female", "value": female});
+      gender_count.push({"sex": "unknown", "value": unknown});
+
+      //console.log(gender_count);
+      angular.copy(gender_count, o.genders);
+    });
+  };
 
   return o;
 }]);
@@ -197,16 +256,18 @@ app.factory('articles', ['$http', 'auth', function($http, auth) {
 
 app.controller('MainCtrl', [
 '$scope',
-    'posts',
-    'articles',
+'posts',
+'articles',
 'auth',
-function($scope, posts, articles,  auth){
+function($scope, posts, articles, auth){
   $scope.test = 'Hello world';
 
   $scope.isLoggedIn = auth.isLoggedIn;
 
+  // Exposing variables to .ejs file
   $scope.posts = posts.posts;
-  $scope.articles = articles.articles
+  $scope.articles = articles.articles;
+  $scope.genders = articles.genders;
 
   $scope.addPost = function() {
     // Checking post content
@@ -261,6 +322,8 @@ app.controller('ArticlesCtrl', [
 'auth',
 function($scope, article, articles, auth) {
   $scope.article = article;
+  //$scope.gender = gender;
+
   $scope.isLoggedIn = auth.isLoggedIn;
 }]);
 

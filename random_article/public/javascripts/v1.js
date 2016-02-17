@@ -68,7 +68,7 @@ function getShooterGenderGraph() {
         for (var gender in data) {
             list.push({'val': data[gender]});
         }
-        renderPieChart(list, "v3");
+        renderPieChart(list, "v1");
     });
 }
 
@@ -100,7 +100,7 @@ function getVictimAgeGraph() {
         for (var age in data) {
             list.push({'x': age, 'y': data[age]});
         }
-        renderBarGraph(list, "v1");
+        renderBarGraph(list, "v3");
     });
 }
 
@@ -161,10 +161,3 @@ function getMonthGraph() {
         renderBarGraph(list, "v4");
     });
 }
-
-$(document).ready( function () {
-    getVictimAgeGraph();
-    getNumShotsGraph();
-    getShooterGenderGraph();
-    getMonthGraph();
-});

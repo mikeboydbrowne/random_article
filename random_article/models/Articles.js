@@ -1,8 +1,9 @@
 var mongoose = require('mongoose');
 
 var ArticleSchema = new mongoose.Schema({
-  title: String,
-  text: String
+  gender: String,
+  text: String,
+  title: String
 });
 
 //ArticleSchema.methods.upvote = function(cb) {

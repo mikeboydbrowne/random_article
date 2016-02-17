@@ -1,2 +1,5 @@
 /random_article/node_modules/*
 /random_article/.bin/*
+/random_article/bower_components/*
+/.idea/*
+/random_article/public/aggregated-data.json
